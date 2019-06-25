@@ -6,18 +6,30 @@ function main() {}
 function doPost(req) {
   const data = JSON.parse(req.postData.getDataAsString());
   if (data.pull_request) {
-    slackPost(data.pull_request.url);
+    slackPost("テストメッセージ", [{
+      color: '#36a64f',
+      author_name: data.pull_request.user.login,
+      author_link: data.pull_request.user.url,
+      title: data.pull_request.title,
+      title_link: data.pull_request.url,
+      footer: data.pull_request.url
+    }]);
   }
 }
 
-function slackPost(message) {
+function slackPost(message, attachments=null) {
   const appConfig = PropertiesService.getScriptProperties();
   const postUrl = appConfig.getProperty("SLACK_WEBHOOK_URL");
-  const send = {
+
+  const send:{[key:string]:any} = {
     username: "test",
     icon_emoji: ":gueee:",
-    text: "test message" + message
+    text: message,
+    attachments: attachments
   };
+
+  if (!attachments) delete send.attachments;
+
   const options = {
     method: "post",
     contentType: "application/json",
