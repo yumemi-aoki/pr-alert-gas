@@ -100,7 +100,7 @@ function getMemberData() {
     const github = col[dataTemplate.github.row];
     const slack = col[dataTemplate.slack.row];
 
-    membersData.github = slack;
+    membersData[github] = slack;
   });
 
   return membersData;
