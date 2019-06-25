@@ -86,7 +86,7 @@ function getMemberData() {
     slack: { cell: 'SlackID', row: -1 },
     github: { cell: 'GithubID', row: -1 }
   };
-  members[0].forEach(function(cell, index) {
+  members.shift().forEach(function(cell, index) {
     Object.keys(dataTemplate).some(function(key) {
       if (cell === dataTemplate[key].cell) {
         dataTemplate[key].row = index;
