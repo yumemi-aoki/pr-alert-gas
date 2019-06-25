@@ -1,3 +1,8 @@
 function main() {
-  console.log('Hello World');
+  Logger.log('Hello World');
+}
+
+function doPost(e) {
+  const data = JSON.parse(e.postData.getDataAsString());
+  Logger.log(data);
 }
