@@ -65,7 +65,7 @@ function slackPost(message, attachments=null) {
 
   if (!attachments) delete send.attachments;
 
-  const options = {
+  const options:GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
     method: "post",
     contentType: "application/json",
     payload: JSON.stringify(send)
