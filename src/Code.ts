@@ -5,6 +5,7 @@ function main() {}
  */
 function doPost(req) {
   const data = JSON.parse(req.postData.getDataAsString());
+
   if (data.pull_request) {
     if (data.action === 'opened' || data.action === 'reopened' || data.action === 'assigned' || data.action === 'ready_for_review' || data.action === 'review_requested') {
       sendRequestReviewMessage(data.pull_request);
@@ -27,7 +28,7 @@ function sendRequestReviewMessage(prData) {
   const members = getMemberData();
   let message = '';
   reviewers.forEach(name => {
-    if (members.name) message = `@${members.name} ${message}`;
+    if (members[name]) message = `<@${members[name]}> ${message}`;
   });
 
   message = `プルリク見てね！ ${message}`;
@@ -43,7 +44,7 @@ function sendRequestReviewMessage(prData) {
 }
 
 function sendCloseMessage(prData) {
-  slackPost(`@here プルリク見てくれてありがとう！`, [{
+  slackPost(`<!here> 🎉 プルリク見てくれてありがとう！`, [{
     author_name: prData.user.login,
     author_link: prData.user.url,
     title: prData.title,
@@ -57,13 +58,10 @@ function slackPost(message, attachments=null) {
   const postUrl = appConfig.getProperty("SLACK_WEBHOOK_URL");
 
   const send:{[key:string]:any} = {
-    username: "test",
-    icon_emoji: ":gueee:",
-    text: message,
-    attachments: attachments
+    text: message
   };
 
-  if (!attachments) delete send.attachments;
+  if (attachments) send.attachments = attachments;
 
   const options:GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
     method: "post",
