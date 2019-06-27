@@ -48,6 +48,7 @@ function sendRequestReviewMessage(pr) {
     author_link: pr.user.html_url,
     title: pr.title,
     title_link: pr.html_url,
+    text: `想定所要時間: ${(pr.additions/2/60).toFixed(1)}分`,
     footer: pr.html_url
   }]);
 }
