@@ -8,39 +8,35 @@ function doPost(req) {
 
   if (data.pull_request) {
     if (data.action === 'opened' || data.action === 'reopened' || data.action === 'ready_for_review') {
+      getLockAndSleep(5,20);
       sendRequestReviewMessage(data.pull_request);
     }
-    /* ここのコメントアウトを解除するとPR人数と同じ回数分だけSlack通知してしまうので注意！
-
     if (data.action === 'assigned' || data.action === 'review_requested') {
-      const created = new Date(data.pull_request.created_at);
-      const updated = new Date(data.pull_request.updated_at);
-
-      if (created.getTime() < updated.getTime()) sendRequestReviewMessage(data.pull_request);
+      if(getLockAndSleep(5,20)) sendRequestReviewMessage(data.pull_request);
     }
-    */
     if (data.action === 'closed' || data.action === 'merged') {
       sendCloseMessage(data.pull_request);
     }
   }
 }
 
-function sendRequestReviewMessage(pr) {
-  if (!pr.requested_reviewers) return;
-
-  const reviewers = pr.requested_reviewers.map(person => {
-    return person.login;
+function sendRequestReviewMessage(pr:{[key:string]:any}) {
+  if (pr.requested_reviewers) pr.requested_reviewers = [];
+  const reviewers:Array<string> = pr.requested_reviewers.map((r:{[key:string]:any}) => {
+    return r.login;
   });
 
-  if (reviewers.length <= 0) return;
-
-  const members = getMemberData();
   let message = '';
-  reviewers.forEach(name => {
-    if (members[name]) message = `${message} <@${members[name]}>`;
-  });
+  if (reviewers.length > 0) {
+    const members = getMemberData();
+    reviewers.forEach(name => {
+      if (members[name]) message = `<@${members[name]}> ${message}`;
+    });
+  } else {
+    message = '<!here>'
+  }
 
-  message = `プルリク見てね！${message}`;
+  message = `${message}プルリク見てね！`;
 
   slackPost(message, [{
     color: '#36a64f',
@@ -80,6 +76,16 @@ function slackPost(message, attachments=null) {
   };
 
   UrlFetchApp.fetch(postUrl, options);
+}
+
+// 同時に複数の処理が走らないようにロックする
+function getLockAndSleep(wait:number, lockTime:number) {
+  const lock = LockService.getScriptLock();
+  if(lock.tryLock(wait)) {
+    Utilities.sleep(lockTime);
+    return true;
+  }
+  return false;
 }
 
 // メンバーのSlackIDとGithubリストを取得
