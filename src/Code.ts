@@ -7,9 +7,18 @@ function doPost(req) {
   const data = JSON.parse(req.postData.getDataAsString());
 
   if (data.pull_request) {
-    if (data.action === 'opened' || data.action === 'reopened' || data.action === 'assigned' || data.action === 'ready_for_review' || data.action === 'review_requested') {
+    if (data.action === 'opened' || data.action === 'reopened' || data.action === 'ready_for_review') {
       sendRequestReviewMessage(data.pull_request);
     }
+    /* ここのコメントアウトを解除するとPR人数と同じ回数分だけSlack通知してしまうので注意！
+
+    if (data.action === 'assigned' || data.action === 'review_requested') {
+      const created = new Date(data.pull_request.created_at);
+      const updated = new Date(data.pull_request.updated_at);
+
+      if (created.getTime() < updated.getTime()) sendRequestReviewMessage(data.pull_request);
+    }
+    */
     if (data.action === 'closed' || data.action === 'merged') {
       sendCloseMessage(data.pull_request);
     }
