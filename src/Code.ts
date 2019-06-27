@@ -84,13 +84,13 @@ function slackPost(message, attachments=null) {
 
 // メンバーのSlackIDとGithubリストを取得
 function getMemberData() {
-  var appConfig = PropertiesService.getScriptProperties();
-  var sheetId = appConfig.getProperty('SHEET_ID');
-  var memberSheetName = appConfig.getProperty('SHEET_NAME_MEMBERS');
-  var memberSheet = SpreadsheetApp.openById(sheetId).getSheetByName(memberSheetName);
-  var members = memberSheet.getDataRange().getValues();
+  const appConfig = PropertiesService.getScriptProperties();
+  const sheetId = appConfig.getProperty('SHEET_ID');
+  const memberSheetName = appConfig.getProperty('SHEET_NAME_MEMBERS');
+  const memberSheet = SpreadsheetApp.openById(sheetId).getSheetByName(memberSheetName);
+  const members = memberSheet.getDataRange().getValues();
 
-  var dataTemplate = {
+  const dataTemplate = {
     slack: { cell: 'SlackID', row: -1 },
     github: { cell: 'GithubID', row: -1 }
   };
@@ -102,7 +102,7 @@ function getMemberData() {
     });
   });
 
-  var membersData:{ [key:string]: any } = {};
+  const membersData:{ [key:string]: any } = {};
 
   members.forEach(function (col) {
     const github = col[dataTemplate.github.row];
