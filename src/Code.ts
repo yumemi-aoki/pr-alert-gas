@@ -36,20 +36,20 @@ function sendRequestReviewMessage(prData) {
   slackPost(message, [{
     color: '#36a64f',
     author_name: prData.user.login,
-    author_link: prData.user.url,
+    author_link: prData.user.html_url,
     title: prData.title,
-    title_link: prData.url,
-    footer: prData.url
+    title_link: prData.html_url,
+    footer: prData.html_url
   }]);
 }
 
 function sendCloseMessage(prData) {
   slackPost(`<!here> 🎉 プルリク見てくれてありがとう！`, [{
     author_name: prData.user.login,
-    author_link: prData.user.url,
+    author_link: prData.user.html_url,
     title: prData.title,
-    title_link: prData.url,
-    footer: prData.url
+    title_link: prData.html_url,
+    footer: prData.html_url
   }]);
 }
 
