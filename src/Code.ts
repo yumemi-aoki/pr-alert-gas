@@ -25,10 +25,10 @@ function doPost(req) {
   }
 }
 
-function sendRequestReviewMessage(prData) {
-  if (!prData.requested_reviewers) return;
+function sendRequestReviewMessage(pr) {
+  if (!pr.requested_reviewers) return;
 
-  const reviewers = prData.requested_reviewers.map(person => {
+  const reviewers = pr.requested_reviewers.map(person => {
     return person.login;
   });
 
@@ -37,28 +37,28 @@ function sendRequestReviewMessage(prData) {
   const members = getMemberData();
   let message = '';
   reviewers.forEach(name => {
-    if (members[name]) message = `<@${members[name]}> ${message}`;
+    if (members[name]) message = `${message} <@${members[name]}>`;
   });
 
-  message = `プルリク見てね！ ${message}`;
+  message = `プルリク見てね！${message}`;
 
   slackPost(message, [{
     color: '#36a64f',
-    author_name: prData.user.login,
-    author_link: prData.user.html_url,
-    title: prData.title,
-    title_link: prData.html_url,
-    footer: prData.html_url
+    author_name: pr.user.login,
+    author_link: pr.user.html_url,
+    title: pr.title,
+    title_link: pr.html_url,
+    footer: pr.html_url
   }]);
 }
 
-function sendCloseMessage(prData) {
+function sendCloseMessage(pr) {
   slackPost(`<!here> 🎉 プルリク見てくれてありがとう！`, [{
-    author_name: prData.user.login,
-    author_link: prData.user.html_url,
-    title: prData.title,
-    title_link: prData.html_url,
-    footer: prData.html_url
+    author_name: pr.user.login,
+    author_link: pr.user.html_url,
+    title: pr.title,
+    title_link: pr.html_url,
+    footer: pr.html_url
   }]);
 }
 
